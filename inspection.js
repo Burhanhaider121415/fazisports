@@ -3,17 +3,16 @@
   const cleanImage = dialog?.querySelector('[data-inspection-clean]');
   const modelImage = dialog?.querySelector('[data-inspection-model]');
   const name = dialog?.querySelector('#inspection-name');
-  const reference = dialog?.querySelector('[data-inspection-reference]');
   const description = dialog?.querySelector('#inspection-description');
   const cta = dialog?.querySelector('[data-inspection-cta]');
   const close = dialog?.querySelector('.product-inspection__close');
-  if (!dialog || !cleanImage || !modelImage || !name || !reference || !description || !cta || !close) return;
+  if (!dialog || !cleanImage || !modelImage || !name || !description || !cta || !close) return;
 
   const imageUrl = path => encodeURI(path);
 
   const buildInquiryUrl = product => {
     const message = [
-      `Hi FAZI SPORTS, I’m interested in ${product.reference} — ${product.name} for a wholesale order.`,
+      `Hi FAZI SPORTS, I’m interested in ${product.name} for a wholesale order.`,
       'Quantity:',
       '___',
       'Required sizes:',
@@ -38,7 +37,6 @@
     modelImage.loading = 'eager';
     modelImage.fetchPriority = 'auto';
     name.textContent = product.name;
-    reference.textContent = product.reference;
     description.textContent = product.description;
     cta.href = buildInquiryUrl(product);
 
