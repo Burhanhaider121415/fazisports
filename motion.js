@@ -52,15 +52,29 @@
 
   const hero = document.querySelector('.hero');
   const heroImage = hero?.querySelector('.hero-image--desktop');
+  const forwardCut = hero?.querySelector('.forward-cut');
   let frame = 0;
   const updateRecession = () => {
     frame = 0;
-    if (!hero || !heroImage || window.innerWidth <= 1080) return;
+    if (!root.classList.contains('motion-ready')) return;
+    if (!hero || !heroImage) return;
     const bounds = hero.getBoundingClientRect();
+    if (window.innerWidth <= 1080) {
+      heroImage.style.transform = '';
+      if (forwardCut) {
+        forwardCut.style.transform = '';
+        if (bounds.bottom <= window.innerHeight * 0.98) forwardCut.classList.add('is-cut-revealed');
+      }
+      return;
+    }
     const range = Math.max(1, bounds.height - window.innerHeight * 0.35);
     const progress = Math.min(1, Math.max(0, -bounds.top / range));
-    const scale = 1.016 - progress * 0.012;
-    heroImage.style.transform = `translate3d(0, ${progress * 4}px, 0) scale(${scale})`;
+    const scale = 1.028 - progress * 0.024;
+    heroImage.style.transform = `translate3d(0, ${progress * 6}px, 0) scale(${scale})`;
+    if (forwardCut) {
+      const cutProgress = Math.min(1, Math.max(0, (window.innerHeight * 1.02 - bounds.bottom) / (window.innerHeight * 0.32)));
+      forwardCut.style.transform = `translate3d(0, ${(1 - cutProgress) * 100}%, 0)`;
+    }
   };
   const queueRecession = () => {
     if (!frame) frame = window.requestAnimationFrame(updateRecession);
@@ -72,10 +86,13 @@
   reducedMotion.addEventListener('change', event => {
     if (!event.matches) return;
     root.classList.remove('motion-ready');
+    if (frame) window.cancelAnimationFrame(frame);
+    frame = 0;
     for (const node of document.querySelectorAll('[data-motion-reveal]')) node.classList.add('is-revealed');
     revealObserver.disconnect();
     window.removeEventListener('scroll', queueRecession);
     window.removeEventListener('resize', queueRecession);
     if (heroImage) heroImage.style.transform = '';
+    if (forwardCut) forwardCut.style.transform = '';
   });
 })();
