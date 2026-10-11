@@ -60,8 +60,6 @@
       grid.replaceChildren(...window.FAZI_PRODUCTS.map(renderProduct));
 
       const hoverMedia = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 701px)');
-      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-      const tiltMedia = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 701px)');
       const syncModelSources = () => {
         for (const image of grid.querySelectorAll('.product-card__image--model')) {
           if (hoverMedia.matches && !image.hasAttribute('src')) image.src = image.dataset.productSrc;
@@ -70,25 +68,6 @@
       };
       syncModelSources();
       hoverMedia.addEventListener('change', syncModelSources);
-
-      if (tiltMedia.matches) {
-        grid.addEventListener('pointermove', event => {
-          const button = event.target.closest('.product-card');
-          if (!button) return;
-          const bounds = button.getBoundingClientRect();
-          const x = (event.clientX - bounds.left) / bounds.width;
-          const y = (event.clientY - bounds.top) / bounds.height;
-          const range = reducedMotion.matches ? 2 : 4;
-          button.style.setProperty('--tilt-x', `${(0.5 - y) * range}deg`);
-          button.style.setProperty('--tilt-y', `${(x - 0.5) * range}deg`);
-        });
-        grid.addEventListener('pointerout', event => {
-          const button = event.target.closest('.product-card');
-          if (!button || button.contains(event.relatedTarget)) return;
-          button.style.removeProperty('--tilt-x');
-          button.style.removeProperty('--tilt-y');
-        });
-      }
 
       grid.addEventListener('click', event => {
         const button = event.target.closest('button[data-product-reference]');
