@@ -304,6 +304,7 @@ p {
 }
 
 .button--primary:hover {
+  background: #bd141b;
   translate: 0 -1px;
 }
 

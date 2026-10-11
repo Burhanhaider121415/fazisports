@@ -7,17 +7,15 @@
   if (!canAnimate) return;
 
   const targets = [
-    '.collection-intro',
+    '.collection-intro h2',
     '.product-card-item:nth-child(-n + 3) .product-card__media',
-    '.wholesale-section__intro',
+    '.wholesale-section__intro h2',
     '.wholesale-capability',
     '.lookbook-section h2',
     '.lookbook-video',
     '.inquiry-process h2',
-    '.inquiry-process__intro',
     '.inquiry-step',
-    '.final-contact__copy',
-    '.final-contact__actions'
+    '.final-contact__copy h2'
   ];
   const revealObserver = new IntersectionObserver(entries => {
     for (const entry of entries) {
