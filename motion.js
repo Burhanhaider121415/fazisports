@@ -3,6 +3,8 @@
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const connection = navigator.connection;
   const constrained = connection?.saveData || ['slow-2g', '2g'].includes(connection?.effectiveType);
+  let stopMotion = () => {};
+  const startMotion = () => {
   const canAnimate = !reducedMotion.matches && !constrained && 'IntersectionObserver' in window;
   if (!canAnimate) return;
 
@@ -39,13 +41,15 @@
   root.classList.add('motion-ready');
   observeReveals(document);
 
+  let productObserver;
   const productGrid = document.querySelector('#product-grid');
   if (productGrid) {
-    new MutationObserver(records => {
+    productObserver = new MutationObserver(records => {
       for (const record of records) for (const node of record.addedNodes) {
         if (node.nodeType === Node.ELEMENT_NODE) observeReveals(node);
       }
-    }).observe(productGrid, { childList: true });
+    });
+    productObserver.observe(productGrid, { childList: true });
   }
 
   const hero = document.querySelector('.hero');
@@ -81,16 +85,21 @@
   window.addEventListener('resize', queueRecession, { passive: true });
   updateRecession();
 
-  reducedMotion.addEventListener('change', event => {
-    if (!event.matches) return;
+  stopMotion = () => {
     root.classList.remove('motion-ready');
     if (frame) window.cancelAnimationFrame(frame);
     frame = 0;
     for (const node of document.querySelectorAll('[data-motion-reveal]')) node.classList.add('is-revealed');
     revealObserver.disconnect();
+    productObserver?.disconnect();
     window.removeEventListener('scroll', queueRecession);
     window.removeEventListener('resize', queueRecession);
     if (heroImage) heroImage.style.transform = '';
     if (forwardCut) forwardCut.style.transform = '';
+  };
+  };
+  startMotion();
+  reducedMotion.addEventListener('change', event => {
+    if (event.matches) stopMotion(); else startMotion();
   });
 })();

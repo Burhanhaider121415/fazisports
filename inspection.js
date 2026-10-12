@@ -8,8 +8,6 @@
   const close = dialog?.querySelector('.product-inspection__close');
   if (!dialog || !cleanImage || !modelImage || !name || !description || !cta || !close) return;
 
-  const imageUrl = path => encodeURI(path);
-
   const buildInquiryUrl = product => {
     const message = [
       `Hi FAZI SPORTS, I’m interested in ${product.name} for a wholesale order.`,
@@ -28,11 +26,15 @@
     const product = event.detail;
     if (!product || !product.reference || !product.name || !product.cleanImage || !product.modelImage || !product.description) return;
 
-    cleanImage.src = imageUrl(product.cleanImage);
+    cleanImage.srcset = [640, 1122].map(width => `/assets/optimized/${product.reference}-clean-${width}.webp ${width}w`).join(', ');
+    cleanImage.sizes = '(max-width: 700px) 100vw, (max-width: 1080px) 48vw, 38vw';
+    cleanImage.src = `/assets/optimized/${product.reference}-clean-1122.webp`;
     cleanImage.alt = product.cleanAlt;
     cleanImage.loading = 'eager';
     cleanImage.fetchPriority = 'high';
-    modelImage.src = imageUrl(product.modelImage);
+    modelImage.srcset = [640, 1122].map(width => `/assets/optimized/${product.reference}-model-${width}.webp ${width}w`).join(', ');
+    modelImage.sizes = cleanImage.sizes;
+    modelImage.src = `/assets/optimized/${product.reference}-model-1122.webp`;
     modelImage.alt = product.modelAlt;
     modelImage.loading = 'eager';
     modelImage.fetchPriority = 'auto';
